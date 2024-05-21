@@ -1,5 +1,20 @@
 <template>
   <q-page class="bg-blue-1 column">
+    <div class="row q-pa-sm bg-grey shadow-9">
+      <q-input
+        @keyup.enter="addTask"
+        filled
+        class="col"
+        square
+        v-model="newTask"
+        placeholder="ass task"
+        dense
+      >
+        <template v-slot:append>
+          <q-btn @click="addTask" round dense flat icon="add"></q-btn>
+        </template>
+      </q-input>
+    </div>
     <q-list separator bordered>
       <q-item
         @click="task.done = !task.done"
@@ -39,6 +54,7 @@
 export default {
   data() {
     return {
+      newTask: "",
       tasks: [
         {
           title: "hello",
@@ -57,7 +73,25 @@ export default {
   },
   methods: {
     deleteTask(index) {
-      this.tasks.splice(index, 1);
+      this.$q
+        .dialog({
+          title: "Confirm",
+          message: "Delete?",
+          cancel: true,
+          persistent: true,
+        })
+        .onOk(() => {
+          this.tasks.splice(index, 1);
+          this.$q.notify("Task delete");
+        });
+      t;
+    },
+    addTask() {
+      this.tasks.push({
+        title: this.newTask,
+        done: false,
+      });
+      this.newTask = "";
     },
   },
 };
